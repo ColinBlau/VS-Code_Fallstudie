@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        
+        <style type="text/css">
+            body {background-color :rgb(39, 42, 44);}
+
+            header {background-color: rgb(32, 35, 36);}
+            header div img {float: left; padding: 5px;}
+            header div h1 {padding-top: 28px; color: white;}
+            header nav {background-color: rgb(39, 42, 44);}
+            header nav ul {margin-bottom: 5px;}
+            header nav ul li a {color: #d3cfc9; margin-right: 2px;}
+
+            #mainpart {background-color:  rgb(59, 62, 65); padding: 25px 25px 0px 5px;}
+            #mainpart nav ul li a {color: white}
+            #contentArea #p1, #contentArea #p2, #contentArea #p3 {color:white;}
+            #contentArea button {margin-bottom: 20px; margin-top: 3px;}
+            
+            footer nav ul {text-align: center; padding-top: 5px;}
+            footer nav ul li a {color: #d3cfc9; margin: 0px 1px 0px 1px;}
+
+        </style>     
+    </head>
+    <body>
+        <header>
+            <div id="top" class="row">
+                <div>
+                    <img src="logo.jpeg">
+                    <h1>Gender-Automat</h1>
+                </div>
+            </div>
+
+
+            <nav>
+                <ul>
+                    <li class="d-inline">
+                        <a href="index.html">Start</a>
+                    </li>
+                    <li class="d-inline">
+                        <a href="privacy.html">Datenschutz</a>
+                    </li>
+                    <li class="d-inline">
+                        <a href="imprint.html">Impressum</a>
+                    </li>
+            </nav>
+
+        </header>
+
+        <div id="mainpart" class="row">
+            <div id="localLinks" class="col-lg-4 col-sm-12" style="order: 1;">
+                <nav>
+                    <ul>
+                        <li>
+                            <button onclick="linksAnordnen()">links anordnen</button>
+                        </li>
+                        <li>
+                            <button onclick="rechtsAnordnen()">rechts anordnen</button>
+                        </li>
+                        <li>
+                            <a href="privacy.html">Datenschutz</a>
+                        </li>
+                        <li>
+                            <a href="imprint.html">Impressum</a>
+                        </li>
+                </nav>
+            </div>
+            <div id="contentArea" class="col-lg-8 col-sm-12" style="order: 2;">
+                
+                <textarea id="userText" cols="65" placeholder="Hier gehört dein Text hin." style="height: 400px;"></textarea>
+                <button type="button" onclick="gender('userText')">Gender</button>
+                
+                <div id="p1">
+                    Kritiker des Gender-Gaps finden, dass er die Identitäten jenseits der binären
+                    Matrix als „Leerstelle“ darstelle und damit ihre
+                    Existenz verneine. Befürworter des Gender-Gaps sehen in
+                    der Lücke einen Freiraum für Entfaltung neuer Identitäten, also ein
+                    emanzipatorisches Symbol.
+                </div>
+                <button type="button" onclick="copyTextFrom('p1')">Kopieren</button>
+                
+                <div id="p2">
+                    Die Software wurde für Manager und Geschäftsführer von großen
+                    Institutionen (mehr als 300 Mitarbeiter) erstellt und ist besonders für 
+                    Anfänger sehr benutzerfreundlich.
+                </div>
+                <button type="button" onclick="copyTextFrom('p2')">Kopieren</button>
+                
+                <div id="p3">
+                    An alle Mitarbeiter...
+                </div>
+                <button type="button" onclick="copyTextFrom('p3')">Kopieren</button>
+
+            </div>
+        </div>
+
+        <footer>
+            
+            <nav>
+                <ul>
+                    <li class="d-inline">
+                        <a href="privacy.html">Datenschutz</a>
+                    </li>
+                    <li class="d-inline">
+                        <a href="imprint.html">Impressum</a>
+                    </li>
+            </nav>
+
+        </footer>
+
+        <script>
+            //kopiert den Inhalt des jeweiligen Paragraphen in das Textfeld 
+            //(das durchzugebende Argument "copyFrom" ist hier die ID des Elements dessen Text kopiert werden soll)
+            function copyTextFrom(copyFrom){
+                document.getElementById("userText").value = document.getElementById(copyFrom).innerText;
+            }
+
+            function gender(ID){
+                let genderMap = new Map();
+
+                genderMap.set("Kritiker", "Kritiker*innen");
+                genderMap.set("Befürworter", "Befürworter*innen");
+                genderMap.set("Leser", "Leser*innen");
+                genderMap.set("Manager", "Manager*innen");
+                genderMap.set("Geschäftsführer", "Geschäftsführer*innen");
+                genderMap.set("benutzerfreundlich", "benutzungsfreundlich");
+                genderMap.set("Mitarbeiter", "Mitarbeiter und Mitarbeiterinnen");
+
+                document.getElementById(ID).value = sanitize(document.getElementById(ID).value);
+
+                let text = document.getElementById(ID).value;
+                //"text" in einzelne Wörter aufteilen
+                text = text.trim();
+                let unwantedCharacters = ["," , "." , "!" , ";"];
+                    for(c of unwantedCharacters){
+                        text = text.replaceAll(c, "");
+                    }
+                var wordList = text.split(" ");
+
+                //falls das jeweilige Wort in der genderMap enthalten ist, wird es 
+                //ersetzt durch die empfohlene Schreibweise (bzw. den value des Schlüsselpaares)
+                for(word of wordList){
+                    if(genderMap.has(word)){
+                        document.getElementById(ID).value = document.getElementById(ID).value.replaceAll(word, genderMap.get(word));
+                    }
+                }
+            }
+
+            function linksAnordnen(){
+                document.getElementById("localLinks").style.order = "1";
+                document.getElementById("contentArea").style.order = "2";
+            }
+            function rechtsAnordnen(){
+                document.getElementById("localLinks").style.order = "2";
+                document.getElementById("contentArea").style.order = "1";
+            }
+
+            /* function test(){
+                document.getElementById("p1").innerHTML = document.getElementById("userText").value;
+            } */
+
+            function sanitize(text){
+                text = text.replaceAll("<", "");
+                text = text.replaceAll(">", "");
+                return text;
+            }
+        </script>
+    </body>
+
+</html>
